@@ -2,6 +2,8 @@
 
 This project provides a set of shell scripts to automate the installation, configuration, management, and updating of a Don't Starve Together (DST) dedicated server on Linux.
 
+Fork from [cuukenn/dontstarveserver](https://github.com/cuukenn/dontstarveserver)
+
 ## Features
 
 - Automated environment setup and dependency installation
@@ -22,7 +24,7 @@ This project provides a set of shell scripts to automate the installation, confi
 	```
 4. **Create a save with mods in your local machine and move it to the server**
     ```
-    # For example use scp command move saves and modes:
+    # For example use scp command to move saves and modes:
     scp -r Cluster_1/ ubuntu@host:~/.klei/DoNotStarveTogether/
     ```
 5. **Switch to the DST user and start the server:**
