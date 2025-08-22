@@ -1,8 +1,6 @@
-# 饥荒联机版专用服务器脚本
+# Don't Starve Together Dedicated Server Scripts
 
 [English](README.md) | [中文](docs/README-zh.md)
-
-# Don't Starve Together Dedicated Server Scripts
 
 This project provides a set of shell scripts to automate the installation, configuration, management, and updating of a Don't Starve Together (DST) dedicated server on Linux.
 
