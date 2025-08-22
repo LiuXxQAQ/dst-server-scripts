@@ -1,3 +1,4 @@
+# [English](../README.md) | [中文](README-zh.md)
 # 饥荒联机版专用服务器脚本
 
 本项目提供了一套 Shell 脚本，用于在 Linux 上自动化安装、配置、管理和更新饥荒联机版（DST）专用服务器。

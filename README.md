@@ -1,6 +1,6 @@
 # 饥荒联机版专用服务器脚本
 
-[English | 中文](README.md | README-zh.md)
+[English](README.md) | [中文](docs/README-zh.md)
 
 # Don't Starve Together Dedicated Server Scripts
 
