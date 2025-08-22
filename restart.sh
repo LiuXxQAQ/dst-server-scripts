@@ -25,21 +25,22 @@ wait_process_exit() {
 cd $(dirname $0)
 bin=$(pwd)
 source config/config.properties
+source scripts/lang.sh
 cd ~/$DST_SCRIPT_PATH
 sh stop.sh
 pids=($(cat .lastpid | awk '{print $1}'))
-echo "Waiting for process exit..."
+get_msg waiting_exit
 wait_process_exit 60 5
 if [ $? -ne 0 ]; then
-    echo "Stop process timeout, try to stop process forcibly..."
+    get_msg stop_timeout
     sh stop.sh 9
-    echo "Waiting for process exit forcibly..."
+    get_msg waiting_exit_forcibly
     wait_process_exit 60 5
-    echo "Process exited"
+    get_msg process_exited
 fi
 update=${1:-0}
 if [ $update -eq 1 ]; then
-    echo "Start updating dst-server..."
+    get_msg updating_server
     sh scripts/setup-dst.sh $STEAMCMD_PATH $DST_SCRIPT_PATH $DST_SERVER_PATH $DST_GAME_ID
 fi
 sh start.sh

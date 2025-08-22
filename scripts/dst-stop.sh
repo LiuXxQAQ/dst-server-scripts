@@ -9,8 +9,10 @@
 #
 # This script stops a DST server process by sending a signal (default SIGTRAP/5).
 
+
 cd $(dirname $0)/../
 source config/config.properties
+source scripts/lang.sh
 
 server_type=$1
 cluster_name=${2:-Cluster_1}
@@ -19,11 +21,11 @@ signal=${3:-5}
 # Find the process ID(s) for the DST server
 pid=($(ps aux | grep -i dontstarve | grep -i ${server_type} | grep -i ${cluster_name} | grep -v grep | awk '{print $2}'))
 if [ -z "${pid}" ]; then
-    echo "No DST server($server_type,$cluster_name) is running, skip"
+    get_msg not_running
     exit 1
 fi
 # Normal stop
-echo "The DST server($server_type,$cluster_name) is running..."
+get_msg running
 kill -${signal} ${pid} >/dev/null 2>&1
-echo "Sending shutdown signal(${signal}) to DST server(${pid}) ok"
+get_msg shutdown_signal
 echo $pid >>.lastpid

@@ -8,7 +8,9 @@
 cd $(dirname $0)
 bin=$(pwd)
 source config/config.properties
+source scripts/lang.sh
 
 cat /dev/null >.lastpid
 sh scripts/dst-stop.sh Master $DST_CLUSTER_NAME
 sh scripts/dst-stop.sh Caves $DST_CLUSTER_NAME
+get_msg stop_success

@@ -64,6 +64,7 @@ Generates the mod setup file from `modoverrides.lua`.
 If `DST_MOD_ENABLE=1` in your configuration, this script will be run automatically before starting the server (see `start.sh`).
 
 
+
 ## Configuration
 
 Edit `config/config.properties` to set:
@@ -75,12 +76,16 @@ Edit `config/config.properties` to set:
 - `DST_CLUSTER_NAME`: Cluster name
 - `DST_CAVES_ENABLE`: 1 to enable caves, 0 to disable
 - `DST_MOD_ENABLE`: 1 to enable mod setup (run `setup-dst-mods.sh` before server start), 0 to disable
+- `LANGUAGE`: `en` for English (default), `zh` for Chinese. Controls all user-facing messages.
+
 
 ## Directory Structure
 
 - Scripts: `dst_scripts/`
 - Config: `dst_scripts/config/`
 - Logs: `dst_scripts/log/`
+- Documentation: `dst_scripts/docs/`
+- Language files: `dst_scripts/lang/`
 - DST server: `/home/<user>/<DST_SERVER_PATH>/`
 - Saves: `/home/<user>/.Klei/DoNotStarveTogether/<DST_CLUSTER_NAME>/`
 
@@ -98,6 +103,13 @@ To enable daily auto-updates, add the cron job:
 ```bash
 crontab -u <DST_USER> /home/<DST_USER>/<DST_SCRIPT_PATH>/config/cron.cmd
 ```
+
+
+## Multi-Language Support
+
+All user-facing messages are localized using .properties files in the `lang/` directory. The language is selected via the `LANGUAGE` variable in `config/config.properties`.
+
+You can add or edit messages in `lang/en.properties` (English) and `lang/zh.properties` (Chinese). To add more languages, create a new .properties file in the `lang/` directory and set `LANGUAGE` accordingly.
 
 ## Troubleshooting
 

@@ -6,18 +6,20 @@
 # This script loads configuration, checks system type, and initializes the system environment for DST server deployment.
 #
 
+source "$(cd "$(dirname "$0")/scripts" && pwd)/lang.sh"
+
 # Load configuration file
 setup_config() {
     local config_path="${bin}/config"
-    echo "Current path: $0, Config path: ${config_path}"
+    get_msg current_path
     source "${config_path}/config.properties"
-    echo "Current config file list:"
+    get_msg config_list
     cat "${config_path}/config.properties"
-    read -p "Confirm all configuration information (Y/N)?" confirm
+    read -p "$(get_msg confirm_config)" confirm
     if [[ "${confirm}" =~ ^[Yy] ]]; then
         echo "------------------------------------"
     else
-        echo "Please re-run after confirming all configuration adjustments!"
+        get_msg rerun_after_config
         exit 1
     fi
 }
@@ -45,7 +47,7 @@ setup_sys_env() {
         echo "Detected system: ${release} $(getconf LONG_BIT)bit, executing script: $script"
         sh "$script"
     else
-    echo "This system is not supported, exiting."
+    get_msg system_not_supported
     exit 1
     fi
 }
@@ -53,12 +55,12 @@ setup_sys_env() {
 # Create dedicated user
 setup_user() {
     if id ${STEAMCMD_USERNAME} >/dev/null 2>&1; then
-        echo "User already exists, skipping creation and proceeding with remaining steps."
+        get_msg user_exists
     else
         useradd ${STEAMCMD_USERNAME}
-        echo "Please enter a password for user ${STEAMCMD_USERNAME}:"
+        get_msg enter_password
         passwd ${STEAMCMD_USERNAME}
-        echo "User ${STEAMCMD_USERNAME} created successfully."
+        get_msg user_created
     fi
 }
 
@@ -90,21 +92,21 @@ setup_dstserver() {
 
 print_info() {
     echo ""
-    echo "File structure:"
+    get_msg file_structure
     tree -P '*.sh|*.properties|*.cmd|*.log' --prune /home/${STEAMCMD_USERNAME}
     echo "---------------------------------------------------------------------------------------"
-    echo "Key directories:"
+    get_msg key_directories
     echo "  Save location: /home/${STEAMCMD_USERNAME}/.Klei/DoNotStarveTogether/${DST_CLUSTER_NAME}"
     echo "  Mods location: /home/${STEAMCMD_USERNAME}/${DST_SERVER_PATH}/mods"
     echo ""
-    echo "Next steps:"
+    get_msg next_steps
     echo "  1. su ${STEAMCMD_USERNAME}"
     echo "  2. cd ~"
     echo "  3. mkdir -p ~/.Klei/DoNotStarveTogether"
     echo "  4. Prepare saves and mods, copy them to the specified directory"
     echo "  5. cd ~/${DST_SCRIPT_PATH}"
     echo "  6. start.sh"
-    echo "If you want to configure a scheduled task, please start the server crond service, then run the following command:"
+    get_msg cron_tip
     echo "  crontab -u ${STEAMCMD_USERNAME} /home/${STEAMCMD_USERNAME}/${DST_SCRIPT_PATH}/config/cron.cmd"
     echo ""
     echo "---------------------------------------------------------------------------------------"
