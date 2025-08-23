@@ -26,17 +26,12 @@ run_server() {
     rm -rf "$lock_file"
 }
 
-
 # Move to script directory root
 cd "$(dirname "$0")/../" || exit 1
 bin=$(pwd)
 
-
 # Source configuration
 source config/config.properties
-
-# Set language (default to en)
-LANGUAGE=${LANGUAGE:-en}
 
 # Parse arguments
 server_type="$1"
@@ -63,4 +58,3 @@ fi
 
 # Start server in background
 nohup $(run_server) >/dev/null 2>&1 &
-get_msg start_success

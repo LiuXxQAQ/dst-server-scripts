@@ -7,7 +7,6 @@
 
 cd $(dirname $0)
 bin=$(pwd)
-source config/config.properties
 source scripts/lang.sh
 
 cat /dev/null >.lastpid

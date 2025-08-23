@@ -6,15 +6,14 @@
 # This script loads configuration, checks system type, and initializes the system environment for DST server deployment.
 #
 
-source "$(cd "$(dirname "$0")/scripts" && pwd)/lang.sh"
-
 # Load configuration file
 setup_config() {
     local config_path="${bin}/config"
-    get_msg current_path
+    echo "$(get_msg current_path) ${config_path}"
     source "${config_path}/config.properties"
-    get_msg config_list
-    cat "${config_path}/config.properties"
+    echo "-------------------- $(get_msg config_list) --------------------"
+    awk -F'=' 'NF==2 {printf "%-25s = %s\n", $1, $2}' "${config_path}/config.properties"
+    echo "------------------------------------------------------"
     read -p "$(get_msg confirm_config)" confirm
     if [[ "${confirm}" =~ ^[Yy] ]]; then
         echo "------------------------------------"
@@ -34,8 +33,8 @@ check_system() {
         release="ubuntu"
     fi
     if [[ -z ${release} ]]; then
-        echo "Other systems are not supported yet."
-        exit 1
+    get_msg system_not_supported
+    exit 1
     fi
 }
 
@@ -44,7 +43,7 @@ setup_sys_env() {
     check_system
     local script="scripts/setup-sys-${release}_$(getconf LONG_BIT).sh"
     if [ -f "$script" ]; then
-        echo "Detected system: ${release} $(getconf LONG_BIT)bit, executing script: $script"
+        get_msg detected_system "${release}" "$(getconf LONG_BIT)" "$script"
         sh "$script"
     else
     get_msg system_not_supported
@@ -83,7 +82,7 @@ setup_scripts() {
     chown -R ${STEAMCMD_USERNAME} ${target_path}
     mkdir -p "$DST_RUN_PATH"
     chown -R ${STEAMCMD_USERNAME} ${DST_RUN_PATH}
-    echo "Scripts copied to ${target_path} successfully."
+    get_msg scripts_copied "${target_path}"
 }
 
 setup_dstserver() {
@@ -96,8 +95,8 @@ print_info() {
     tree -P '*.sh|*.properties|*.cmd|*.log' --prune /home/${STEAMCMD_USERNAME}
     echo "---------------------------------------------------------------------------------------"
     get_msg key_directories
-    echo "  Save location: /home/${STEAMCMD_USERNAME}/.Klei/DoNotStarveTogether/${DST_CLUSTER_NAME}"
-    echo "  Mods location: /home/${STEAMCMD_USERNAME}/${DST_SERVER_PATH}/mods"
+    echo "  $(get_msg save_location): /home/${STEAMCMD_USERNAME}/.Klei/DoNotStarveTogether/${DST_CLUSTER_NAME}"
+    echo "  $(get_msg mods_location): /home/${STEAMCMD_USERNAME}/${DST_SERVER_PATH}/mods"
     echo ""
     get_msg next_steps
     echo "  1. su ${STEAMCMD_USERNAME}"
@@ -106,6 +105,7 @@ print_info() {
     echo "  4. Prepare saves and mods, copy them to the specified directory"
     echo "  5. cd ~/${DST_SCRIPT_PATH}"
     echo "  6. start.sh"
+    echo ""
     get_msg cron_tip
     echo "  crontab -u ${STEAMCMD_USERNAME} /home/${STEAMCMD_USERNAME}/${DST_SCRIPT_PATH}/config/cron.cmd"
     echo ""
@@ -115,6 +115,7 @@ print_info() {
 
 cd $(dirname $0)
 bin=$(pwd)
+source "${bin}/scripts/lang.sh"
 setup_config
 setup_sys_env
 setup_user

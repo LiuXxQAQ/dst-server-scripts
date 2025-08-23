@@ -11,7 +11,6 @@
 
 
 cd $(dirname $0)/../
-source config/config.properties
 source scripts/lang.sh
 
 server_type=$1
@@ -21,11 +20,11 @@ signal=${3:-5}
 # Find the process ID(s) for the DST server
 pid=($(ps aux | grep -i dontstarve | grep -i ${server_type} | grep -i ${cluster_name} | grep -v grep | awk '{print $2}'))
 if [ -z "${pid}" ]; then
-    get_msg not_running
+    get_msg not_running "$server_type"
     exit 1
 fi
 # Normal stop
-get_msg running
+get_msg stop_running "$server_type"
 kill -${signal} ${pid} >/dev/null 2>&1
-get_msg shutdown_signal
+get_msg shutdown_signal "$server_type"
 echo $pid >>.lastpid

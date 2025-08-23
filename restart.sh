@@ -14,7 +14,7 @@ wait_process_exit() {
             if [ $remain_sleep -le 0 ]; then
                 return 1
             fi
-            echo "Process still running, waiting ${each_sleep}s to recheck, remaining timeout is ${remain_sleep}s..."
+            get_msg process_waiting "${each_sleep}" "${remain_sleep}"
             sleep $each_sleep
             ((remain_sleep -= $each_sleep))
         done
@@ -24,8 +24,8 @@ wait_process_exit() {
 
 cd $(dirname $0)
 bin=$(pwd)
-source config/config.properties
 source scripts/lang.sh
+
 cd ~/$DST_SCRIPT_PATH
 sh stop.sh
 pids=($(cat .lastpid | awk '{print $1}'))
