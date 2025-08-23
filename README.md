@@ -47,9 +47,9 @@ For detailed usage, script explanations, and troubleshooting, see the following:
 
 - `scripts/` — All management and helper scripts
 - `config/` — Configuration files
-- `log/` — Log files
+- `log/` — Log files (local)
 - `docs/` — Documentation
-- `lang/` — Language JSON files for multi-language support
+- `lang/` — Language .properties files for multi-language prompt support
 
 ## License
 
