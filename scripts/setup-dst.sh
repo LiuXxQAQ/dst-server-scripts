@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./setup-dst.sh STEAMCMD_PATH DST_SCRIPT_PATH DST_SERVER_PATH DST_GAME_ID
@@ -16,22 +16,28 @@ set -e
 dst_path=~/$3
 mkdir -p "$dst_path"
 dst_path=$(cd "$dst_path" && pwd)
-cmd_path=$2/config
+cmd_path="$2/config"
 
 # Set steamcmd commands
-echo "force_install_dir ${dst_path}" > ~/${cmd_path}/update_starve.cmd
+echo "force_install_dir $dst_path" > ~/${cmd_path}/update_starve.cmd
 echo "login anonymous" >> ~/${cmd_path}/update_starve.cmd
 echo "app_update $4 validate" >> ~/${cmd_path}/update_starve.cmd
 echo "quit" >> ~/${cmd_path}/update_starve.cmd
 
 # Run steamcmd
-~/$1/steamcmd.sh < ~/$cmd_path/update_starve.cmd
+steamcmd_path=~/$1/steamcmd.sh
+echo "$steamcmd_path"
+cmdfile=~/$cmd_path/update_starve.cmd
+if ! "$steamcmd_path" < "$cmdfile"; then
+    echo "SteamCMD 执行失败，请检查网络和参数！"
+    exit 1
+fi
 
 # Fix missing libcurl-gnutls.so.4 if needed
 cd "$dst_path/bin/lib32"
 lib_file=libcurl-gnutls.so.4
-if [ ! -L $lib_file ] && [ ! -f $lib_file ]; then
-    ln -s /usr/lib/libcurl.so.4 $lib_file
+if [ ! -L "$lib_file" ] && [ ! -f "$lib_file" ]; then
+    ln -s /usr/lib/libcurl.so.4 "$lib_file"
 fi
 
 # Write cron expression for daily update

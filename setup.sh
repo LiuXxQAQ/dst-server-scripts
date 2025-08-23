@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./setup.sh
@@ -8,14 +8,16 @@
 
 # Load configuration file
 setup_config() {
-    local config_path="${bin}/config"
+    config_path="${bin}/config"
     echo "$(get_msg current_path) ${config_path}"
-    source "${config_path}/config.properties"
+    . "${config_path}/config.properties"
     echo "-------------------- $(get_msg config_list) --------------------"
     awk -F'=' 'NF==2 {printf "%-25s = %s\n", $1, $2}' "${config_path}/config.properties"
     echo "------------------------------------------------------"
-    read -p "$(get_msg confirm_config)" confirm
-    if [[ "${confirm}" =~ ^[Yy] ]]; then
+    printf "%s" "$(get_msg confirm_config)"
+    read confirm
+    echo "$confirm" | grep -Eq '^[Yy]'
+    if [ $? -eq 0 ]; then
         echo "------------------------------------"
     else
         get_msg rerun_after_config
@@ -25,49 +27,50 @@ setup_config() {
 
 # Detect system type
 check_system() {
-    if [[ -n $(find /etc -name "redhat-release") ]] || grep </proc/version -q -i "centos"; then
+    if [ -n "$(find /etc -name "redhat-release" 2>/dev/null)" ] || grep </proc/version -q -i "centos"; then
         release="centos"
-    elif grep </etc/issue -q -i "debian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "debian" && [[ -f "/proc/version" ]]; then
+    elif grep </etc/issue -q -i "debian" && [ -f "/etc/issue" ] || grep </etc/issue -q -i "debian" && [ -f "/proc/version" ]; then
         release="debian"
-    elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
+    elif grep </etc/issue -q -i "ubuntu" && [ -f "/etc/issue" ] || grep </etc/issue -q -i "ubuntu" && [ -f "/proc/version" ]; then
         release="ubuntu"
     fi
-    if [[ -z ${release} ]]; then
-    get_msg system_not_supported
-    exit 1
+    if [ -z "$release" ]; then
+        get_msg system_not_supported
+        exit 1
     fi
 }
 
 # Initialize system environment
 setup_sys_env() {
     check_system
-    local script="scripts/setup-sys-${release}_$(getconf LONG_BIT).sh"
+    script="scripts/setup-sys-${release}_$(getconf LONG_BIT).sh"
     if [ -f "$script" ]; then
-        get_msg detected_system "${release}" "$(getconf LONG_BIT)" "$script"
+        get_msg detected_system "$release" "$(getconf LONG_BIT)" "$script"
         sh "$script"
     else
-    get_msg system_not_supported
-    exit 1
+        get_msg system_not_supported
+        exit 1
     fi
 }
 
 # Create dedicated user
 setup_user() {
-    if id ${STEAMCMD_USERNAME} >/dev/null 2>&1; then
+    if id "$STEAMCMD_USERNAME" >/dev/null 2>&1; then
         get_msg user_exists
     else
-        useradd ${STEAMCMD_USERNAME}
+        useradd "$STEAMCMD_USERNAME"
         get_msg enter_password
-        passwd ${STEAMCMD_USERNAME}
+        passwd "$STEAMCMD_USERNAME"
         get_msg user_created
     fi
 }
 
 # Initialize steamcmd
 setup_steamcmd() {
-        su - ${STEAMCMD_USERNAME} -c "
+    su - "$STEAMCMD_USERNAME" -c "
     mkdir -p ~/${STEAMCMD_PATH} \
     && cd ~/${STEAMCMD_PATH} \
+    && rm -f steamcmd_linux.tar.gz \
     && wget -P ~/${STEAMCMD_PATH} https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
     && tar -xvzf ~/${STEAMCMD_PATH}/steamcmd_linux.tar.gz
     "
@@ -75,18 +78,18 @@ setup_steamcmd() {
 
 # Copy scripts to the specified directory
 setup_scripts() {
-    local target_path=/home/${STEAMCMD_USERNAME}/${DST_SCRIPT_PATH}
-    su - ${STEAMCMD_USERNAME} -c "mkdir -p ${target_path}"
-    cp -r ./* ${target_path}
-    find ${target_path} -name \*.sh -print | xargs -n 1 chmod u+x
-    chown -R ${STEAMCMD_USERNAME} ${target_path}
+    target_path="/home/${STEAMCMD_USERNAME}/${DST_SCRIPT_PATH}"
+    su - "$STEAMCMD_USERNAME" -c "mkdir -p $target_path"
+    cp -r ./* "$target_path"
+    find "$target_path" -name \*.sh -print | xargs -n 1 chmod u+x
+    chown -R "$STEAMCMD_USERNAME" "$target_path"
     mkdir -p "$DST_RUN_PATH"
-    chown -R ${STEAMCMD_USERNAME} ${DST_RUN_PATH}
-    get_msg scripts_copied "${target_path}"
+    chown -R "$STEAMCMD_USERNAME" "$DST_RUN_PATH"
+    get_msg scripts_copied "$target_path"
 }
 
 setup_dstserver() {
-    su - ${STEAMCMD_USERNAME} -c "sh ~/$DST_SCRIPT_PATH/scripts/setup-dst.sh $STEAMCMD_PATH $DST_SCRIPT_PATH $DST_SERVER_PATH $DST_GAME_ID"
+    su - "$STEAMCMD_USERNAME" -c "sh ~/$DST_SCRIPT_PATH/scripts/setup-dst.sh $STEAMCMD_PATH $DST_SCRIPT_PATH $DST_SERVER_PATH $DST_GAME_ID"
 }
 
 print_info() {
@@ -113,9 +116,9 @@ print_info() {
     echo ""
 }
 
-cd $(dirname $0)
+cd "$(dirname "$0")"
 bin=$(pwd)
-source "${bin}/scripts/lang.sh"
+. "${bin}/scripts/lang.sh"
 setup_config
 setup_sys_env
 setup_user

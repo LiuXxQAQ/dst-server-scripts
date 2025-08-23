@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./start.sh
@@ -6,10 +6,10 @@
 # This script starts the DST Master and (optionally) Caves servers, logging output.
 
 
-bin="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source ${bin}/scripts/lang.sh
+bin="$(cd "$(dirname "$0")" && pwd)"
+. ${bin}/scripts/lang.sh
 
-dst_log_path=$bin/$DST_LOG_PATH
+dst_log_path="$bin/$DST_LOG_PATH"
 mkdir -p "$dst_log_path"
 
 # Generate the mod setup file before starting the server

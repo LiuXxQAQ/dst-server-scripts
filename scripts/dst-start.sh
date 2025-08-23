@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./dst-start.sh <server_type> [cluster_name]
@@ -17,7 +17,7 @@
 
 
 # Source global language function
-source "$(cd "$(dirname "$0")/../scripts" && pwd)/lang.sh"
+. "$(cd "$(dirname "$0")/../scripts" && pwd)/lang.sh"
 
 # Function to run the DST server
 run_server() {
@@ -31,7 +31,7 @@ cd "$(dirname "$0")/../" || exit 1
 bin=$(pwd)
 
 # Source configuration
-source config/config.properties
+. config/config.properties
 
 # Parse arguments
 server_type="$1"
@@ -46,8 +46,8 @@ fi
 
 dst_server_bin=~/$DST_SERVER_PATH/bin
 cd "$dst_server_bin" || exit 1
-export SteamAppId=$DST_GAME_ID
-export SteamGameId=$DST_GAME_ID
+export SteamAppId="$DST_GAME_ID"
+export SteamGameId="$DST_GAME_ID"
 mkdir -p "$DST_RUN_PATH"
 lock_file="$DST_RUN_PATH/${server_type}_${cluster_name}.lock"
 

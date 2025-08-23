@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./restart.sh [update]
@@ -24,7 +24,7 @@ wait_process_exit() {
 
 cd $(dirname $0)
 bin=$(pwd)
-source scripts/lang.sh
+ . scripts/lang.sh
 
 cd ~/$DST_SCRIPT_PATH
 sh stop.sh

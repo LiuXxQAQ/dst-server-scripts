@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./update.sh
@@ -7,6 +7,6 @@
 
 cd $(dirname $0)
 bin=$(pwd)
-source scripts/lang.sh
+. scripts/lang.sh
 get_msg updating_server
 sh restart.sh 1

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # setup-dst-mods.sh - Generate DST server mod setup file from modoverrides.lua
 #
@@ -14,7 +14,7 @@
 #
 
 # Source global language function
-source "$(cd "$(dirname "$0")/../scripts" && pwd)/lang.sh"
+. "$(cd "$(dirname "$0")/../scripts" && pwd)/lang.sh"
 
 if [ $# -ne 3 ]; then
     echo "Usage: $0 DST_CLUSTER_NAME DST_SERVER_PATH DST_MOD_ENABLE"
@@ -46,8 +46,7 @@ fi
 
 # Extract mod IDs and write ServerModSetup lines
 grep -o '"workshop-[0-9]\+"' "$MODOVERRIDES" | sed 's/"//g' | while read modid; do
-    # Remove 'workshop-' prefix for ServerModSetup
-    id=${modid#workshop-}
+    id=$(echo "$modid" | sed 's/workshop-//')
     echo "ServerModSetup(\"$id\")"
 done > "$OUTPUT"
 get_msg wrote_mod_setup "$OUTPUT"

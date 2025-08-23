@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Usage:
 #   ./stop.sh
@@ -7,7 +7,7 @@
 
 cd $(dirname $0)
 bin=$(pwd)
-source scripts/lang.sh
+. scripts/lang.sh
 
 cat /dev/null >.lastpid
 sh scripts/dst-stop.sh Master $DST_CLUSTER_NAME
