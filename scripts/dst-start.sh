@@ -14,11 +14,6 @@
 #   ./dst-start.sh Caves MyCluster
 
 
-
-
-# Source global language function
-. "$(cd "$(dirname "$0")/../scripts" && pwd)/lang.sh"
-
 # Function to run the DST server
 run_server() {
     echo $$ > "$lock_file"
@@ -30,13 +25,15 @@ run_server() {
 cd "$(dirname "$0")/../" || exit 1
 bin=$(pwd)
 
+# Source global language function
+. "$bin/scripts/lang.sh"
+
 # Source configuration
-. config/config.properties
+. "$bin/config/config.properties"
 
 # Parse arguments
 server_type="$1"
 cluster_name="${2:-${DST_CLUSTER_NAME:-Server_Cluster_1}}"
-
 
 if [ -z "$server_type" ]; then
     echo "Error: <server_type> is required (Master or Caves)"
@@ -50,11 +47,10 @@ export SteamAppId="$DST_GAME_ID"
 export SteamGameId="$DST_GAME_ID"
 mkdir -p "$DST_RUN_PATH"
 lock_file="$DST_RUN_PATH/${server_type}_${cluster_name}.lock"
-
 if [ -f "$lock_file" ]; then
-    get_msg already_running
+    get_msg already_running "$server_type"
     exit 1
 fi
 
-# Start server in background
+# Start server (nohup is used inside the function)
 nohup $(run_server) >/dev/null 2>&1 &

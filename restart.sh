@@ -28,7 +28,7 @@ bin=$(pwd)
 
 cd ~/$DST_SCRIPT_PATH
 sh stop.sh
-pids=($(cat .lastpid | awk '{print $1}'))
+pids=$(cat .lastpid | awk '{print $1}')
 get_msg waiting_exit
 wait_process_exit 60 5
 if [ $? -ne 0 ]; then

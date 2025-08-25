@@ -38,10 +38,11 @@ fi
 
 get_msg mod_enable
 
-MODOVERRIDES=~/.klei/DoNotStarveTogether/${DST_CLUSTER_NAME}/Master/modoverrides.lua
+MODOVERRIDES="$HOME/.klei/DoNotStarveTogether/$DST_CLUSTER_NAME/Master/modoverrides.lua"
 # Check if modoverrides.lua exists
 if [ ! -f "$MODOVERRIDES" ]; then
     get_msg modoverrides_missing "$MODOVERRIDES"
+    exit 1
 fi
 
 # Extract mod IDs and write ServerModSetup lines

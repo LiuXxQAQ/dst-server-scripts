@@ -15,7 +15,7 @@ cd "$(dirname "$0")/../"
 
 server_type="$1"
 cluster_name="${2:-Cluster_1}"
-signal="${3:-5}"
+signal="${3:-15}"
 
 # Find the process ID(s) for the DST server
 pid=$(ps aux | grep -i dontstarve | grep -i "$server_type" | grep -i "$cluster_name" | grep -v grep | awk '{print $2}')
@@ -23,6 +23,7 @@ if [ -z "$pid" ]; then
     get_msg not_running "$server_type"
     exit 1
 fi
+
 # Normal stop
 get_msg stop_running "$server_type"
 kill -"$signal" $pid >/dev/null 2>&1
